@@ -1,26 +1,140 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* UXCam brand palette */
+  --color-navy: #161e35;
+  --color-ink-700: #404759;
+  --color-ink-500: #6c7180;
+  --color-ink-400: #9b9ea8;
+  --color-ink-300: #c7c9cf;
+  --color-ink-200: #e8e9eb;
+  --color-ink-100: #f5f5f5;
+  --color-accent: #5d97ff;
+  --color-accent-deep: #426bb5;
+  --color-accent-mid: #4f80d9;
+  --color-accent-200: #d8e6ff;
+  --color-accent-100: #eff5ff;
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
+/* inline so the next/font variables (set as classes on <html>) resolve at the
+   element that uses them — a plain @theme var chain dies at :root. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-headline: var(--font-poppins), system-ui, sans-serif;
+  --font-body: var(--font-roboto), system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Element defaults live in the base layer so utility classes can override them
+   (unlayered rules would beat Tailwind's layered utilities). */
+@layer base {
+  body {
+    font-family: var(--font-body);
+    color: var(--color-ink-700);
+    background: #fff;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-headline);
+    color: var(--color-navy);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Marketing entrance — rare (first paint of a page), purpose: preventing a jarring
+   pop-in of hero content. Staggered via --rise-index. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.rise-in {
+  animation: rise-in 0.5s var(--ease-out-strong) both;
+  animation-delay: calc(var(--rise-index, 0) * 60ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation-name: fade-only;
+    transform: none;
+  }
+  @keyframes fade-only {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+/* Occlusion hook: intentionally unstyled. Session-replay SDKs (UXCam, PostHog…)
+   get configured to mask elements matching .pii-field — emails, passwords,
+   card inputs all carry it. */
+.pii-field {
+}
+
+/* Scroll reveal — marketing surfaces only, fired once per element. */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 500ms var(--ease-out-strong),
+    transform 500ms var(--ease-out-strong);
+}
+
+.reveal[data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transform: none;
+  }
+}
+
+/* Quick-view modal — centered, so transform-origin: center is exempt. */
+dialog.modal {
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity 250ms var(--ease-out-strong),
+    transform 250ms var(--ease-out-strong),
+    display 250ms allow-discrete,
+    overlay 250ms allow-discrete;
+}
+
+dialog.modal[open] {
+  opacity: 1;
+  transform: none;
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+dialog.modal::backdrop {
+  background: rgb(22 30 53 / 0);
+  transition:
+    background 250ms var(--ease-out-strong),
+    display 250ms allow-discrete,
+    overlay 250ms allow-discrete;
+}
+
+dialog.modal[open]::backdrop {
+  background: rgb(22 30 53 / 0.4);
+
+  @starting-style {
+    background: rgb(22 30 53 / 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog.modal {
+    transform: none;
+  }
 }
