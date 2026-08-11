@@ -47,8 +47,12 @@ export function Footer() {
             </li>
             <li>
               {/* Deliberate hard navigation (<a>, not <Link>): SDKs handle full
-                  page loads differently from SPA route changes. */}
-              <a href="/contact" className="hover:text-white">
+                  page loads differently from SPA route changes. Plain <a> hrefs
+                  bypass Next's basePath, so it's prefixed manually. */}
+              <a
+                href={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/contact/`}
+                className="hover:text-white"
+              >
                 Contact (full page load)
               </a>
             </li>
