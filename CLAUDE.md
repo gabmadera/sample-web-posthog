@@ -48,8 +48,9 @@ CI via GitHub Actions repo *variables* consumed by `.github/workflows/deploy.yml
 `checkout_started`, `checkout_completed`, `form_error` (field **names** only, never values),
 `login`, `logout`, `contact_submitted`, `video_play`/`video_pause`, `carousel_navigated`.
 
-**Occlusion targets.** Elements holding PII (emails, password, card fields on `/checkout`,
-`/account`, `/contact`) carry BOTH markers, and any new PII element must too:
+**Occlusion targets.** Elements holding PII (emails, password, address + card fields on
+`/checkout`, `/account`, `/contact`) carry BOTH markers, and any new PII element must too
+(the checkout *name* field is deliberately left unoccluded as a control for occlusion QA):
 `class="pii-field"` (PostHog `maskTextSelector`, plus the documented convention) and
 `data-uxc="obfuscated"` (UXCam Web per-element occlusion). UXCam also auto-occludes
 `type=email/password/tel/number` inputs; the markers make masking explicit and vendor-agnostic.

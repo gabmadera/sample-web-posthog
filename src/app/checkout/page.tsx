@@ -151,6 +151,7 @@ export default function CheckoutPage() {
             label="Shipping address"
             name="address"
             error={errors.address}
+            pii
           />
         </fieldset>
 
