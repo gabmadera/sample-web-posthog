@@ -1,20 +1,28 @@
 import type { Metadata } from "next";
-import { Poppins, Roboto } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import { AnalyticsListener } from "@/lib/analytics/listener";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import "./globals.css";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+// Self-hosted (latin subset) — next/font/google downloads at build time and
+// its CDN flakiness kept breaking CI builds.
+const poppins = localFont({
+  src: [
+    { path: "../fonts/poppins-v24-latin-regular.woff2", weight: "400" },
+    { path: "../fonts/poppins-v24-latin-500.woff2", weight: "500" },
+    { path: "../fonts/poppins-v24-latin-600.woff2", weight: "600" },
+    { path: "../fonts/poppins-v24-latin-700.woff2", weight: "700" },
+  ],
   variable: "--font-poppins",
 });
 
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const roboto = localFont({
+  src: [
+    { path: "../fonts/roboto-v51-latin-regular.woff2", weight: "400" },
+    { path: "../fonts/roboto-v51-latin-500.woff2", weight: "500" },
+  ],
   variable: "--font-roboto",
 });
 
