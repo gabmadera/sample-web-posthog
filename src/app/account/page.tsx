@@ -54,7 +54,9 @@ export default function AccountPage() {
           </div>
           <h1 className="mt-4 text-2xl font-semibold">{user.name}</h1>
           {/* Emails are PII — same occlusion class as the checkout card fields. */}
-          <p className="pii-field mt-1 text-ink-500">{user.email}</p>
+          <p data-uxc="obfuscated" className="pii-field mt-1 text-ink-500">
+            {user.email}
+          </p>
           <dl className="mt-6 space-y-3 border-t border-ink-200 pt-6 text-sm">
             <div className="flex justify-between">
               <dt className="text-ink-500">Plan</dt>
@@ -100,6 +102,7 @@ export default function AccountPage() {
             name="email"
             type="email"
             autoComplete="email"
+            data-uxc="obfuscated"
             className="pii-field w-full rounded-lg border border-ink-300 px-3.5 py-2.5 text-sm text-navy outline-none transition-[border-color,box-shadow] duration-150 focus:border-accent focus:ring-2 focus:ring-accent-200"
           />
         </label>
@@ -111,6 +114,7 @@ export default function AccountPage() {
             name="password"
             type="password"
             autoComplete="current-password"
+            data-uxc="obfuscated"
             className="pii-field w-full rounded-lg border border-ink-300 px-3.5 py-2.5 text-sm text-navy outline-none transition-[border-color,box-shadow] duration-150 focus:border-accent focus:ring-2 focus:ring-accent-200"
           />
         </label>

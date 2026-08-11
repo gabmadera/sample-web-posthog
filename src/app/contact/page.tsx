@@ -82,6 +82,7 @@ export default function ContactPage() {
             name="email"
             type="email"
             autoComplete="email"
+            data-uxc="obfuscated"
             className={clsx("pii-field", inputClasses(errors.email))}
           />
           {errors.email && (

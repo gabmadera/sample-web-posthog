@@ -9,8 +9,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 "Northlight" — a fake smart-lighting storefront that exists as an **SDK test-bed for CSE work**.
 Every feature was chosen to exercise analytics/monitoring SDKs (UXCam Web, PostHog, Sentry, …):
 session replay, event capture, PII occlusion, identify/reset, funnels, SPA vs hard navigation.
-No vendor SDK is integrated yet; the site ships with an adapter facade so each SDK lands later as
-one provider file + env var. Design doc: `docs/plans/2026-08-11-showcase-site-design.md`.
+Design doc: `docs/plans/2026-08-11-showcase-site-design.md`.
+Deployed to GitHub Pages at https://gabmadera.github.io/sample-web-posthog/ on every push to
+`main` (repo `gabmadera/sample-web-posthog`).
 
 ## Commands
 
@@ -28,14 +29,30 @@ Dev builds register a console logger — open devtools and every event prints as
 register it in `index.ts` behind a `NEXT_PUBLIC_*` env var. Zero call-site changes.
 `page()` fires automatically on every route change via `AnalyticsListener` in the root layout.
 
+**Registered providers** (each activates only when its key is set — locally in `.env.local`, in
+CI via GitHub Actions repo *variables* consumed by `.github/workflows/deploy.yml`):
+- **PostHog** (`providers/posthog.ts`, `NEXT_PUBLIC_POSTHOG_KEY` + `_HOST`, EU cloud):
+  posthog-js with `capture_pageview: false` — the facade's `page()` sends `$pageview` so every
+  SDK receives identical inputs. Replay masking via `maskTextSelector: ".pii-field"`; the
+  recorder only runs if session replay is enabled in the PostHog project settings.
+- **UXCam Web** (`providers/uxcam.ts`, `NEXT_PUBLIC_UXCAM_KEY` — **pending, not yet issued**):
+  official stub queue + script from `websdk-recording.uxcam.com`. Page visits are auto-captured
+  (URL-based) so `page()` is a no-op; there is no client-side `reset()` on web. Integration
+  guides come from the Tara MCP (`get_sdk_guide(platform="web", topic=…)`) — use it, don't
+  guess. Verification after the key lands: `verify_integration` handshake, then
+  `validate_instrumentation` with a pre-run UTC `since` (rung 2), and occlusion QA via
+  `verify_web_occlusion` — never `analyze_session_video` on web.
+
 **Canonical events** (grep for `track(`): `cta_click`, `product_clicked`, `product_viewed`,
 `quick_view_opened`, `add_to_cart` (with `source: grid|quick_view|detail`), `cart_item_removed`,
 `checkout_started`, `checkout_completed`, `form_error` (field **names** only, never values),
 `login`, `logout`, `contact_submitted`, `video_play`/`video_pause`, `carousel_navigated`.
 
-**Occlusion targets.** Inputs holding PII (emails, password, card fields on `/checkout` and
-`/account`) carry the intentionally-unstyled class `pii-field` — session-replay occlusion rules
-should mask on that selector.
+**Occlusion targets.** Elements holding PII (emails, password, card fields on `/checkout`,
+`/account`, `/contact`) carry BOTH markers, and any new PII element must too:
+`class="pii-field"` (PostHog `maskTextSelector`, plus the documented convention) and
+`data-uxc="obfuscated"` (UXCam Web per-element occlusion). UXCam also auto-occludes
+`type=email/password/tel/number` inputs; the markers make masking explicit and vendor-agnostic.
 
 **Page → scenario map:** `/` marketing + scroll reveals · `/products` grid + native-`<dialog>`
 quick view · `/products/[id]` SSG detail + clip-path tabs · `/cart` → `/checkout` funnel with

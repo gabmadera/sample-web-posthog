@@ -28,6 +28,7 @@ function Field({
       </span>
       <input
         {...props}
+        data-uxc={pii ? "obfuscated" : undefined}
         className={clsx(
           "w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-navy outline-none",
           "transition-[border-color,box-shadow] duration-150",

@@ -8,9 +8,11 @@ hard load), a product → cart → checkout funnel, PII fields for occlusion tes
 a fake login that drives `identify()`/`reset()`, video/carousel/long-scroll replay stress, and
 validated forms emitting error events.
 
-**No SDK is integrated yet.** All instrumentation goes through the adapter facade in
-`src/lib/analytics/` — in dev, events print to the browser console as `[analytics] …`. Adding an
-SDK = one provider file implementing `AnalyticsProvider` + registering it behind an env var.
+All instrumentation goes through the adapter facade in `src/lib/analytics/` — in dev, events
+also print to the browser console as `[analytics] …`. Integrated providers: **PostHog** (EU
+cloud, active) and **UXCam Web** (activates once `NEXT_PUBLIC_UXCAM_KEY` is set). Adding another
+SDK = one provider file implementing `AnalyticsProvider` + registering it behind an env var —
+see `.env.example`.
 
 ## Run
 

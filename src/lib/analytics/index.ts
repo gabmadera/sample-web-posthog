@@ -1,5 +1,7 @@
 import type { AnalyticsProvider, EventProps, UserTraits } from "./types";
 import { consoleProvider } from "./providers/console";
+import { posthogProvider } from "./providers/posthog";
+import { uxcamProvider } from "./providers/uxcam";
 
 const providers: AnalyticsProvider[] = [];
 
@@ -7,9 +9,14 @@ if (process.env.NODE_ENV === "development") {
   providers.push(consoleProvider);
 }
 
-// Vendor SDKs register here later, e.g.:
-// if (process.env.NEXT_PUBLIC_POSTHOG_KEY) providers.push(posthogProvider);
-// if (process.env.NEXT_PUBLIC_UXCAM_KEY) providers.push(uxcamProvider);
+// NEXT_PUBLIC_* vars are inlined at build time — a missing key means the
+// provider never registers and the site runs without that SDK.
+if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+  providers.push(posthogProvider);
+}
+if (process.env.NEXT_PUBLIC_UXCAM_KEY) {
+  providers.push(uxcamProvider);
+}
 
 let initialized = false;
 
