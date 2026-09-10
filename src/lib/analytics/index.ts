@@ -1,5 +1,6 @@
 import type { AnalyticsProvider, EventProps, UserTraits } from "./types";
 import { consoleProvider } from "./providers/console";
+import { logRocketProvider } from "./providers/logrocket";
 import { posthogProvider } from "./providers/posthog";
 import { uxcamProvider } from "./providers/uxcam";
 
@@ -16,6 +17,9 @@ if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
 }
 if (process.env.NEXT_PUBLIC_UXCAM_KEY) {
   providers.push(uxcamProvider);
+}
+if (process.env.NEXT_PUBLIC_LOGROCKET_APP_ID) {
+  providers.push(logRocketProvider);
 }
 
 let initialized = false;
