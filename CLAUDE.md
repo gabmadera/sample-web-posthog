@@ -35,8 +35,9 @@ CI via GitHub Actions repo *variables* consumed by `.github/workflows/deploy.yml
   posthog-js with `capture_pageview: false` — the facade's `page()` sends `$pageview` so every
   SDK receives identical inputs. Replay masking via `maskTextSelector: ".pii-field"`; the
   recorder only runs if session replay is enabled in the PostHog project settings.
-- **LogRocket** (`providers/logrocket.ts`, `NEXT_PUBLIC_LOGROCKET_APP_ID`, app `3qhtkz/webmobile`
-  — the same LogRocket app as the Flutter demo, so web and mobile sessions sit side by side):
+- **LogRocket** (`providers/logrocket.ts`, `NEXT_PUBLIC_LOGROCKET_APP_ID` — an `org/app` slug, set
+  locally in `.env.local` and in CI as a repo variable; the same LogRocket app as the Flutter
+  demo, so web and mobile sessions sit side by side):
   the `logrocket` npm SDK. Navigation is captured automatically from history changes, so
   `page()` only adds a `$pageview` breadcrumb to keep the timeline aligned with the other SDKs.
   `reset()` maps to `startNewSession()` — web has no identity reset. Occlusion is kept at
